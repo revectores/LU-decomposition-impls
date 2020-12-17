@@ -1,6 +1,7 @@
 OBJECT = test/test_lu
 # IMPL = lu_seq
-IMPL = lu_fine_grain_condvar
+# IMPL = lu_fine_grain_condvar
+IMPL = lu_row_aggl_condvar
 LU_PATH = impl/${IMPL}
 CC = gcc -I $(LU_PATH) -I util -I timing
 
