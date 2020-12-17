@@ -39,7 +39,7 @@ ssize_t read_matrix_from(FILE* fp, double*** Mp){
 
 
 void test_lu_decompose(){
-    char* matrix_filename = "input_10.txt";
+    char* matrix_filename = "input_3.txt";
 
     FILE* fp = fopen(matrix_filename, "r");
     if (!fp) {
@@ -56,10 +56,13 @@ void test_lu_decompose(){
     double start_clock;
     double fin_clock;
 
-    print_matrix((double**)A, n);
-
     start_clock = now();
     lu_decompose((double**)A, n, (double**)L, (double**)U);
+
+    print_matrix((double**)A, n);
+    print_matrix((double**)L, n);
+    print_matrix((double**)U, n);
+
     fin_clock = now();
     printf("%lf\n", fin_clock - start_clock);
 }

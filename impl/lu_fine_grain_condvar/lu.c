@@ -33,7 +33,7 @@ void* lu_worker(void* args){
     pthread_mutex_t (*mutexes)[n] = (void*) worker_args->mutexes;
 
     // Approach 1: condition variable
-    for (int k = 0; k < min(r, c) - 1; k++) {
+    for (int k = 0; k < min(r, c); k++) {
         while (!done[k][c])
             pthread_cond_wait(&signals[k][c], &mutexes[r][c]);
         while (!done[r][k])
@@ -80,7 +80,7 @@ int lu_decompose(double** Ap, size_t n, double** Lp, double** Up){
     bool (*done)[n] = malloc(sizeof(bool[n][n]));
     pthread_cond_t (*signals)[n] = malloc(sizeof(pthread_cond_t[n][n]));
     pthread_mutex_t (*mutexes)[n] = malloc(sizeof(pthread_mutex_t[n][n]));
-    worker_args_s (*worker_args_matrix)[n] = malloc(sizeof(worker_args_matrix[n][n]));
+    worker_args_s (*worker_args_matrix)[n] = malloc(sizeof(worker_args_s[n][n]));
 
     for (size_t r = 0; r < n; r++) {
         for (size_t c = 0; c < n; c++) {
@@ -90,25 +90,11 @@ int lu_decompose(double** Ap, size_t n, double** Lp, double** Up){
                 (void*)signals,
                 (void*)mutexes
             };
-        };
-    }
-
-    for (size_t r = 0; r < n; r++){
-        for (size_t c = 0; c < n; c++){
             pthread_mutex_init(&mutexes[r][c], NULL);
-            // pthread_mutex_lock(&mutexes[r][c]);
             pthread_cond_init(&signals[r][c], NULL);
-
             done[r][c] = false;
-        }
-    }
-
-    for (size_t r = 0; r < n; r++){
-        for (size_t c = 0; c < n; c++){
-            // printf("master: %zu %zu\n", worker_args.r, worker_args.c);
-            // printf("%d %d\n", r, c);
             pthread_create(&threads[r][c], NULL, lu_worker, &worker_args_matrix[r][c]);
-        }
+        };
     }
 
     for (size_t r = 0; r < n; r++){
